@@ -19,16 +19,6 @@
 @end
 
 @implementation HXPhotoPreviewBottomView
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    [super traitCollectionDidChange:previousTraitCollection];
-#ifdef __IPHONE_13_0
-    if (@available(iOS 13.0, *)) {
-        if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
-            [self changeColor];
-        }
-    }
-#endif
-}
 - (instancetype)initWithFrame:(CGRect)frame modelArray:(NSArray *)modelArray manager:(HXPhotoManager *)manager {
     self = [super initWithFrame:frame];
     if (self) {
@@ -46,7 +36,6 @@
     [self addSubview:self.editBtn];
     [self addSubview:self.tipView];
     [self changeDoneBtnFrame];
-    [self changeColor];
 }
 - (void)setEnabled:(BOOL)enabled {
     _enabled = enabled;
@@ -149,7 +138,7 @@
 }
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     HXPhotoPreviewBottomViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"DatePreviewBottomViewCellId" forIndexPath:indexPath];
-    cell.selectColor = self.manager.configuration.themeColor;
+    cell.selectColor = self.manager.configuration.cellSelectedBgColor;
     HXPhotoModel *model = self.modelArray[indexPath.item];
     cell.model = model;
     return cell;
@@ -243,36 +232,6 @@
     
     [self changeDoneBtnFrame];
 }
-- (void)changeColor {
-    UIColor *themeColor;
-    UIColor *selectedTitleColor;
-    if ([HXPhotoCommon photoCommon].isDark) {
-        themeColor = [UIColor whiteColor];
-        selectedTitleColor = [UIColor whiteColor];
-        self.bgView.barTintColor = [UIColor blackColor];
-        self.tipView.barTintColor = [UIColor blackColor];
-    }else {
-        themeColor = self.manager.configuration.themeColor;
-        selectedTitleColor = self.manager.configuration.selectedTitleColor;
-        self.bgView.barTintColor = nil;
-        self.tipView.barTintColor = nil;
-    }
-    _tipLb.textColor = themeColor;
-    if ([themeColor isEqual:[UIColor whiteColor]]) {
-        [_doneBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [_doneBtn setTitleColor:[[UIColor blackColor] colorWithAlphaComponent:0.5] forState:UIControlStateDisabled];
-    }else {
-        [_doneBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_doneBtn setTitleColor:[[UIColor whiteColor] colorWithAlphaComponent:0.5] forState:UIControlStateDisabled];
-    }
-    if (selectedTitleColor) {
-        [_doneBtn setTitleColor:selectedTitleColor forState:UIControlStateNormal];
-        [_doneBtn setTitleColor:[selectedTitleColor colorWithAlphaComponent:0.5] forState:UIControlStateDisabled];
-    }
-    _doneBtn.backgroundColor = [HXPhotoCommon photoCommon].isDark ? [UIColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1] : themeColor;
-    [_editBtn setTitleColor:themeColor forState:UIControlStateNormal];
-    [_editBtn setTitleColor:[themeColor colorWithAlphaComponent:0.5] forState:UIControlStateDisabled];
-}
 #pragma mark - < 懒加载 >
 - (UIToolbar *)bgView {
     if (!_bgView) {
@@ -292,6 +251,7 @@
     if (!_tipLb) {
         _tipLb = [[UILabel alloc] init];
         _tipLb.numberOfLines = 0;
+        _tipLb.textColor = self.manager.configuration.themeColor;
         _tipLb.font = [UIFont systemFontOfSize:14];
     }
     return _tipLb;
@@ -325,8 +285,20 @@
     if (!_doneBtn) {
         _doneBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_doneBtn setTitle:[NSBundle hx_localizedStringForKey:@"完成"] forState:UIControlStateNormal];
+        if ([self.manager.configuration.themeColor isEqual:[UIColor whiteColor]]) {
+            [_doneBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            [_doneBtn setTitleColor:[[UIColor blackColor] colorWithAlphaComponent:0.5] forState:UIControlStateDisabled];
+        }else {
+            [_doneBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            [_doneBtn setTitleColor:[[UIColor whiteColor] colorWithAlphaComponent:0.5] forState:UIControlStateDisabled];
+        }
+        if (self.manager.configuration.selectedTitleColor) {
+            [_doneBtn setTitleColor:self.manager.configuration.selectedTitleColor forState:UIControlStateNormal];
+            [_doneBtn setTitleColor:[self.manager.configuration.selectedTitleColor colorWithAlphaComponent:0.5] forState:UIControlStateDisabled];
+        }
         _doneBtn.titleLabel.font = [UIFont systemFontOfSize:14];
         _doneBtn.layer.cornerRadius = 3;
+        _doneBtn.backgroundColor = self.manager.configuration.themeColor;
         [_doneBtn addTarget:self action:@selector(didDoneBtnClick) forControlEvents:UIControlEventTouchUpInside];
     }
     return _doneBtn;
@@ -335,6 +307,8 @@
     if (!_editBtn) {
         _editBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_editBtn setTitle:[NSBundle hx_localizedStringForKey:@"编辑"] forState:UIControlStateNormal];
+        [_editBtn setTitleColor:self.manager.configuration.themeColor forState:UIControlStateNormal];
+        [_editBtn setTitleColor:[self.manager.configuration.themeColor colorWithAlphaComponent:0.5] forState:UIControlStateDisabled];
         _editBtn.titleLabel.font = [UIFont systemFontOfSize:16];
         [_editBtn addTarget:self action:@selector(didEditBtnClick) forControlEvents:UIControlEventTouchUpInside];
         _editBtn.hx_size = CGSizeMake(50, 50);
@@ -349,20 +323,7 @@
 @end
 
 @implementation HXPhotoPreviewBottomViewCell
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    [super traitCollectionDidChange:previousTraitCollection];
-#ifdef __IPHONE_13_0
-    if (@available(iOS 13.0, *)) {
-        if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
 
-            UIColor *themeColor = [HXPhotoCommon photoCommon].isDark ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1] : self.selectColor;
-
-            self.layer.borderColor = self.selected ? [themeColor colorWithAlphaComponent:0.5].CGColor : nil;
-            
-        }
-    }
-#endif
-}
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
@@ -402,8 +363,8 @@
             }
         }]; 
     } 
-    self.layer.borderWidth = self.selected ? 5 : 0;
-    self.layer.borderColor = self.selected ? [([HXPhotoCommon photoCommon].isDark ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1] : self.selectColor) colorWithAlphaComponent:0.5].CGColor : nil;
+    self.layer.borderWidth = self.selected ? 3 : 0;
+    self.layer.borderColor = self.selected ? [self.selectColor colorWithAlphaComponent:1.0].CGColor : nil;
 }
 - (void)layoutSubviews {
     [super layoutSubviews];
@@ -418,18 +379,15 @@
     return _imageView;
 }
 - (void)setSelectColor:(UIColor *)selectColor {
-    _selectColor = selectColor;
     if (!_selectColor) {
-        if ([HXPhotoCommon photoCommon].isDark) {
-            selectColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1];
-        }
-        self.layer.borderColor = self.selected ? [selectColor colorWithAlphaComponent:0.5].CGColor : nil;
+        self.layer.borderColor = self.selected ? [selectColor colorWithAlphaComponent:1.0].CGColor : nil;
     }
+    _selectColor = selectColor;
 }
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
-    self.layer.borderWidth = selected ? 5 : 0;
-    self.layer.borderColor = selected ? [([HXPhotoCommon photoCommon].isDark ? [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1] : self.selectColor) colorWithAlphaComponent:0.5].CGColor : nil;
+    self.layer.borderWidth = selected ? 3 : 0;
+    self.layer.borderColor = selected ? [self.selectColor colorWithAlphaComponent:1.0].CGColor : nil;
 }
 - (void)cancelRequest {
     if (self.requestID) {

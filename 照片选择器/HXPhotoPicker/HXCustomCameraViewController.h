@@ -30,6 +30,7 @@ typedef void (^ HXCustomCameraViewControllerDidCancelBlock)(HXCustomCameraViewCo
 
 /// 取消
 /// @param viewController self
+
 - (void)customCameraViewControllerDidCancel:(HXCustomCameraViewController *)viewController;
 @end
 

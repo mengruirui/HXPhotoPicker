@@ -272,6 +272,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self.navigationController setNavigationBarHidden:YES];
+
     [self.cameraController startMontionUpdate];
 }
 - (void)viewDidDisappear:(BOOL)animated {
@@ -582,6 +583,7 @@
             _previewView.hx_size = CGSizeMake(self.view.hx_w, self.view.hx_w / 9 * 16);
             _previewView.center = CGPointMake(self.view.hx_w / 2, self.view.hx_h / 2);
         }
+        _previewView.delegate = self;
     }
     return _previewView;
 }
@@ -632,10 +634,9 @@
 - (UIButton *)flashBtn {
     if (!_flashBtn) {
         _flashBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        UIImage *normalImage = [UIImage hx_imageNamed:@"hx_camera_flashlight"];
-        [_flashBtn setImage:normalImage forState:UIControlStateNormal];
-        UIImage *selectedImage = [UIImage hx_imageNamed:@"hx_flash_pic_nopreview"];
-        [_flashBtn setImage:selectedImage forState:UIControlStateSelected];
+        [_flashBtn setImage:[UIImage hx_imageNamed:@"hx_camera_flashlight"] forState:UIControlStateNormal];
+        [_flashBtn setImage:[UIImage hx_imageNamed:@"hx_flash_pic_nopreview"] forState:UIControlStateSelected];
+        _flashBtn.hx_size = _flashBtn.currentImage.size;
         [_flashBtn addTarget:self action:@selector(didFlashClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _flashBtn;
@@ -681,7 +682,7 @@
     if (!_effectView) {
         UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
         _effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
-        _effectView.frame = self.previewView.bounds;
+        _effectView.frame = self.view.bounds;
     }
     return _effectView;
 }
@@ -748,39 +749,38 @@
     self.photoBtn.center = CGPointMake([UIScreen mainScreen].bounds.size.width / 2, 0);
     self.videoBtn.hx_x = CGRectGetMaxX(self.photoBtn.frame) + 10;
     self.titleLb.alpha = 0;
-    
     switch (self.manager.configuration.customCameraType) {
-        case HXPhotoCustomCameraTypeUnused: {
-            if (self.manager.type == HXPhotoManagerSelectedTypePhotoAndVideo) {
-                if (!self.manager.configuration.selectTogether && self.isOutside) {
-                    if (self.manager.afterSelectedPhotoArray.count > 0) {
-                        [self setupPhotoAndVideoType];
-                    }else if (self.manager.afterSelectedVideoArray.count > 0) {
-                        [self setupVideoType];
-                    }else {
-                        [self setupPhotoAndVideoType];
-                    }
-                }else {
-                    [self setupPhotoAndVideoType];
-                }
-            }else if (self.manager.type == HXPhotoManagerSelectedTypePhoto) {
-                [self setupPhotoType];
-            }else {
-                [self setupVideoType];
-            }
-        } break;
-        case HXPhotoCustomCameraTypePhoto: {
-            [self setupPhotoType];
-        } break;
-        case HXPhotoCustomCameraTypeVideo: {
-            [self setupVideoType];
-        } break;
-        case HXPhotoCustomCameraTypePhotoAndVideo: {
-            [self setupPhotoAndVideoType];
-        } break;
-        default:
-            break;
-    }
+           case HXPhotoCustomCameraTypeUnused: {
+               if (self.manager.type == HXPhotoManagerSelectedTypePhotoAndVideo) {
+                   if (!self.manager.configuration.selectTogether && self.isOutside) {
+                       if (self.manager.afterSelectedPhotoArray.count > 0) {
+                           [self setupPhotoAndVideoType];
+                       }else if (self.manager.afterSelectedVideoArray.count > 0) {
+                           [self setupVideoType];
+                       }else {
+                           [self setupPhotoAndVideoType];
+                       }
+                   }else {
+                       [self setupPhotoAndVideoType];
+                   }
+               }else if (self.manager.type == HXPhotoManagerSelectedTypePhoto) {
+                   [self setupPhotoType];
+               }else {
+                   [self setupVideoType];
+               }
+           } break;
+           case HXPhotoCustomCameraTypePhoto: {
+               [self setupPhotoType];
+           } break;
+           case HXPhotoCustomCameraTypeVideo: {
+               [self setupVideoType];
+           } break;
+           case HXPhotoCustomCameraTypePhotoAndVideo: {
+               [self setupPhotoAndVideoType];
+           } break;
+           default:
+               break;
+       }
 }
 - (void)setupPhotoType {
     self.mode = HXCustomCameraBottomViewModePhoto;
@@ -804,6 +804,7 @@
     self.photoBtn.enabled = NO;
     self.videoBtn.enabled = YES;
 }
+
 - (void)takePictures {
     if ([self.delegate respondsToSelector:@selector(playViewClick)]) {
         [self.delegate playViewClick];
@@ -842,7 +843,7 @@
     self.timeLb.text = [NSBundle hx_localizedStringForKey:@"3秒内的视频无效哦~"];
 }
 - (void)stopRecord {
-    if (self.manager.configuration.customCameraType == HXPhotoCustomCameraTypeUnused) {
+   if (self.manager.configuration.customCameraType == HXPhotoCustomCameraTypeUnused) {
         if (self.manager.type == HXPhotoManagerSelectedTypePhotoAndVideo && self.isOutside) {
             if (!self.manager.configuration.selectTogether) {
                 if (self.manager.afterSelectedPhotoArray.count > 0) {
@@ -883,23 +884,15 @@
     self.playView.center = CGPointMake(self.hx_w / 2, self.hx_h / 2 + 10);
     self.timeLb.frame = CGRectMake(12, self.playView.hx_y - 26, self.hx_w - 24, 15);
     self.titleLb.frame = CGRectMake(12, self.playView.hx_y - 20 - 30, self.hx_w - 24, 15);
-    if (self.manager.configuration.customCameraType == HXPhotoCustomCameraTypeUnused) {
-        if (self.manager.type == HXPhotoManagerSelectedTypeVideo ||
-            self.manager.type == HXPhotoManagerSelectedTypePhoto) {
-            self.titleLb.hx_y = self.playView.hx_y - 30;
-        }else if (self.manager.type == HXPhotoManagerSelectedTypePhotoAndVideo) {
-            if (!self.manager.configuration.selectTogether && self.isOutside) {
-                if (self.manager.afterSelectedPhotoArray.count > 0) {
-                    self.titleLb.hx_y = self.playView.hx_y - 30;
-                }else if (self.manager.afterSelectedVideoArray.count > 0) {
-                    self.titleLb.hx_y = self.playView.hx_y - 30;
-                }
+    if (self.manager.type == HXPhotoManagerSelectedTypeVideo || self.manager.type == HXPhotoManagerSelectedTypePhoto) {
+        self.titleLb.hx_y = self.playView.hx_y - 30;
+    }else if (self.manager.type == HXPhotoManagerSelectedTypePhotoAndVideo) {
+        if (!self.manager.configuration.selectTogether && self.isOutside) {
+            if (self.manager.afterSelectedPhotoArray.count > 0) {
+                self.titleLb.hx_y = self.playView.hx_y - 30;
+            }else if (self.manager.afterSelectedVideoArray.count > 0) {
+                self.titleLb.hx_y = self.playView.hx_y - 30;
             }
-        }
-    }else {
-        if (self.manager.configuration.customCameraType == HXPhotoCustomCameraTypePhoto ||
-            self.manager.configuration.customCameraType == HXPhotoCustomCameraTypeVideo) {
-            self.titleLb.hx_y = self.playView.hx_y - 30;
         }
     }
     self.photoBtn.hx_y = self.playView.hx_y - 30;

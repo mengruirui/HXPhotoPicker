@@ -32,11 +32,11 @@
                        delegate:(id<HXCustomNavigationControllerDelegate>)delegate
                       doneBlock:(viewControllerDidDoneBlock)doneBlock
                     cancelBlock:(viewControllerDidCancelBlock)cancelBlock {
+    manager.selectPhotoing = YES;
     [manager selectedListTransformBefore];
-    if (!manager.cameraRollAlbumModel && !manager.selectPhotoing) {
+    if (!manager.cameraRollAlbumModel) {
         [manager preloadData];
     }
-    manager.selectPhotoing = YES;
     
     if (manager.configuration.albumShowMode == HXPhotoAlbumShowModeDefault) {
         HXAlbumListViewController *vc = [[HXAlbumListViewController alloc] initWithManager:manager];
@@ -119,9 +119,6 @@
 }
 
 - (void)dealloc {
-    if (self.manager.configuration.restoreNavigationBar) {
-        [UINavigationBar appearance].translucent = NO;
-    }
     self.manager.selectPhotoing = NO;
     [self.manager removeAllTempList];
     [self.manager removeAllAlbum];

@@ -54,7 +54,7 @@ typedef NS_ENUM(NSUInteger, HXPhotoModelMediaTypeCameraVideoType) {
 };
 
 typedef NS_ENUM(NSUInteger, HXPhotoModelVideoState) {
-    HXPhotoModelVideoStateNormal = 0,   //!< 正常状态
+    HXPhotoModelVideoStateNormal = 0,   //!< 普通状态
     HXPhotoModelVideoStateUndersize,    //!< 视频时长小于最小选择秒数
     HXPhotoModelVideoStateOversize      //!< 视频时长超出限制
 };
@@ -216,9 +216,9 @@ typedef NS_ENUM(NSUInteger, HXPhotoModelVideoState) {
 /// 判断两个HXPhotoModel是否是同一个
 /// @param photoModel 模型
 - (BOOL)isEqualPhotoModel:(HXPhotoModel * _Nullable)photoModel;
-
 #pragma mark - < Request >
 + (id _Nullable)requestImageWithURL:(NSURL *_Nullable)url progress:(void (^ _Nullable) (NSInteger receivedSize, NSInteger expectedSize))progress completion:(void (^ _Nullable) (UIImage * _Nullable image, NSURL * _Nullable url, NSError * _Nullable error))completion;
+
 
 + (PHImageRequestID)requestThumbImageWithPHAsset:(PHAsset * _Nullable)asset size:(CGSize)size completion:(void (^ _Nullable)(UIImage *_Nullable image, PHAsset * _Nullable asset))completion;
 
@@ -329,12 +329,13 @@ typedef NS_ENUM(NSUInteger, HXPhotoModelVideoState) {
          可用于取消请求 [self.asset cancelContentEditingInputRequest:(PHContentEditingInputRequestID)];
  */
 - (PHContentEditingInputRequestID)requestImageURLStartRequestICloud:(void (^ _Nullable)(
-                                                                                        PHContentEditingInputRequestID iCloudRequestId,
-                                                                                        HXPhotoModel * _Nullable model)
-                                                                     )startRequestICloud
-                                                    progressHandler:(HXModelProgressHandler _Nullable)progressHandler
-                                                            success:(HXModelImageURLSuccessBlock _Nullable)success
-                                                             failed:(HXModelFailedBlock _Nullable)failed;
+                                    PHContentEditingInputRequestID iCloudRequestId,
+                                    HXPhotoModel * _Nullable model)
+                 )startRequestICloud
+progressHandler:(HXModelProgressHandler _Nullable)progressHandler
+        success:(HXModelImageURLSuccessBlock _Nullable)success
+         failed:(HXModelFailedBlock _Nullable)failed;
+
 @end
 
 @class CLGeocoder;

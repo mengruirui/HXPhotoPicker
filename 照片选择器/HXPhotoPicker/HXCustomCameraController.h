@@ -26,9 +26,7 @@
 @property (strong, nonatomic, readonly) AVCaptureSession *captureSession;
 
 - (void)initSeesion;
-- (void)setupPreviewLayer:(AVCaptureVideoPreviewLayer *)previewLayer startSessionCompletion:(void (^)(BOOL success))completion;
-
-- (void)startSession;
+- (void)setupPreviewLayer:(AVCaptureVideoPreviewLayer *)previewLayer startSessionCompletion:(void (^)(BOOL success))completion;- (void)startSession;
 - (void)stopSession;
 
 - (void)initImageOutput;

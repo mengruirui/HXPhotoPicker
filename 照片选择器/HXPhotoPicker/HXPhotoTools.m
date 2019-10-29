@@ -11,6 +11,7 @@
 #import "UIImage+HXExtension.h"
 #import "HXPhotoManager.h"
 #import <sys/utsname.h>
+#import "HXDatePhotoToolManager.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 @implementation HXPhotoTools
 
@@ -140,7 +141,6 @@
         if (handler) handler(status);
     }else if (status == PHAuthorizationStatusDenied ||
               status == PHAuthorizationStatusRestricted) {
-                  if (handler) handler(status);
         [self showNoAuthorizedAlertWithViewController:viewController];
     }else {
         [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {

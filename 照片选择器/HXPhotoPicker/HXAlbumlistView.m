@@ -14,21 +14,11 @@
 @end
 
 @implementation HXAlbumlistView
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    [super traitCollectionDidChange:previousTraitCollection];
-#ifdef __IPHONE_13_0
-    if (@available(iOS 13.0, *)) {
-        if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
-            self.tableView.backgroundColor = [HXPhotoCommon photoCommon].isDark ? [UIColor colorWithRed:0.075 green:0.075 blue:0.075 alpha:1] : [UIColor whiteColor];
-        }
-    }
-#endif
-}
+
 - (instancetype)initWithManager:(HXPhotoManager *)manager {
     self = [super init];
     if (self) {
         self.manager = manager;
-        self.tableView.backgroundColor = [HXPhotoCommon photoCommon].isDark ? [UIColor colorWithRed:0.075 green:0.075 blue:0.075 alpha:1] : [UIColor whiteColor];
         [self addSubview:self.tableView];
     }
     return self;
@@ -45,6 +35,7 @@
     }
     [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.currentSelectModel.index inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
 }
+
 - (void)refreshCamearCount {
     NSInteger i = 0;
     for (HXAlbumModel *albumMd in self.albumModelArray) {
@@ -128,30 +119,38 @@
 @end
 
 @implementation HXAlbumlistViewCell
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    [super traitCollectionDidChange:previousTraitCollection];
-#ifdef __IPHONE_13_0
-    if (@available(iOS 13.0, *)) {
-        if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
-            [self setManager:self.manager];
-        }
-    }
-#endif
-}
+
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         self.selectedBackgroundView = self.selectedBgView;
         [self.contentView addSubview:self.coverView];
         [self.contentView addSubview:self.albumNameLb];
-        [self.contentView addSubview:self.countLb];
+//        [self.contentView addSubview:self.countLb];
         [self.contentView addSubview:self.lineView];
+        [self.coverView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(16);
+            make.centerY.mas_equalTo(0);
+            make.size.mas_equalTo(CGSizeMake(40, 40));
+        }];
+        [self.albumNameLb mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(self.coverView.mas_right).mas_equalTo(16);
+            make.centerY.mas_equalTo(0);
+            make.right.mas_equalTo(-16);
+        }];
+        [self.lineView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(16);
+            make.right.mas_equalTo(-16);
+            make.bottom.mas_equalTo(0);
+            make.height.mas_equalTo(0.5);
+        }];
+
     }
     return self;
 }
 - (void)setModel:(HXAlbumModel *)model {
     _model = model;
-    self.albumNameLb.text = model.albumName;
+//    self.albumNameLb.text = model.albumName;
     if (!model.result && model.collection) {
         HXWeakSelf
         [model getResultWithCompletion:^(HXAlbumModel *albumModel) {
@@ -174,7 +173,7 @@
     if (self.getResultCompleteBlock) {
         self.getResultCompleteBlock(photoCount + self.model.cameraCount, self);
     }
-    self.countLb.text = @(photoCount + self.model.cameraCount).stringValue;
+    self.albumNameLb.text = [NSString stringWithFormat:@"%@ (%@)" ,self.model.albumName,@(photoCount + self.model.cameraCount).stringValue];
     HXWeakSelf
     self.requestId = [HXPhotoModel requestThumbImageWithPHAsset:self.model.asset size:CGSizeMake(self.hx_h * 1.6, self.hx_h * 1.6) completion:^(UIImage *image, PHAsset *asset) {
         if (asset == weakSelf.model.asset) {
@@ -184,48 +183,26 @@
 }
 - (void)setManager:(HXPhotoManager *)manager {
     _manager = manager;
-    if ([HXPhotoCommon photoCommon].isDark) {
-        self.selectedBgView.backgroundColor = [UIColor colorWithRed:0.125 green:0.125 blue:0.125 alpha:1];
-        self.lineView.backgroundColor = [UIColor colorWithRed:0.1 green:0.1 blue:0.1 alpha:1];
-        self.backgroundColor = [UIColor colorWithRed:0.075 green:0.075 blue:0.075 alpha:1];
-        self.albumNameLb.textColor = [UIColor whiteColor];
-        self.countLb.textColor = [UIColor whiteColor];
-    }else {
-        if (manager.configuration.popupTableViewCellSelectColor) {
-            self.selectedBgView.backgroundColor = manager.configuration.popupTableViewCellSelectColor;
-        }else {
-            self.selectedBgView.backgroundColor = [UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.f];
-        }
-        if (manager.configuration.popupTableViewCellLineColor) {
-            self.lineView.backgroundColor = manager.configuration.popupTableViewCellLineColor;
-        }else {
-            self.lineView.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.f];
-        }
-        if (manager.configuration.popupTableViewCellBgColor) {
-            self.backgroundColor = manager.configuration.popupTableViewCellBgColor;
-        }else {
-            self.backgroundColor = nil;
-        }
-        if (manager.configuration.popupTableViewCellAlbumNameColor) {
-            self.albumNameLb.textColor = manager.configuration.popupTableViewCellAlbumNameColor;
-        }else {
-            self.albumNameLb.textColor = [UIColor blackColor];
-        }
-        if (manager.configuration.popupTableViewCellPhotoCountColor) {
-            self.countLb.textColor = manager.configuration.popupTableViewCellPhotoCountColor;
-        }else {
-            self.countLb.textColor = [UIColor blackColor];
-        }
+    if (manager.configuration.popupTableViewCellSelectColor) {
+        self.selectedBgView.backgroundColor = manager.configuration.popupTableViewCellSelectColor;
     }
-    if (manager.configuration.popupTableViewCellPhotoCountFont) {
-        self.countLb.font = manager.configuration.popupTableViewCellPhotoCountFont;
-    }else {
-        self.countLb.font = [UIFont systemFontOfSize:13];
+    if (manager.configuration.popupTableViewCellLineColor) {
+        self.lineView.backgroundColor = manager.configuration.popupTableViewCellLineColor;
+    }
+    if (manager.configuration.popupTableViewCellBgColor) {
+        self.backgroundColor = manager.configuration.popupTableViewCellBgColor;
+    }
+    if (manager.configuration.popupTableViewCellAlbumNameColor) {
+        self.albumNameLb.textColor = manager.configuration.popupTableViewCellAlbumNameColor;
     }
     if (manager.configuration.popupTableViewCellAlbumNameFont) {
         self.albumNameLb.font = manager.configuration.popupTableViewCellAlbumNameFont;
-    }else {
-        self.albumNameLb.font = [UIFont systemFontOfSize:14];
+    }
+    if (manager.configuration.popupTableViewCellPhotoCountColor) {
+        self.countLb.textColor = manager.configuration.popupTableViewCellPhotoCountColor;
+    }
+    if (manager.configuration.popupTableViewCellPhotoCountFont) {
+        self.countLb.font = manager.configuration.popupTableViewCellPhotoCountFont;
     }
 }
 - (void)cancelRequest {
@@ -237,23 +214,24 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     self.selectedBgView.frame = self.bounds;
-    self.coverView.frame = CGRectMake(12, 5, self.hx_h - 10, self.hx_h - 10);
-    self.albumNameLb.hx_x = CGRectGetMaxX(self.coverView.frame) + 12;
-    self.albumNameLb.hx_w = self.hx_w - self.albumNameLb.hx_x - 10;
-    self.albumNameLb.hx_h = self.albumNameLb.hx_getTextHeight;
-    
-    self.countLb.hx_x = CGRectGetMaxX(self.coverView.frame) + 12;
-    self.countLb.hx_w = self.hx_w - self.countLb.hx_x - 10;
-    self.countLb.hx_h = 14;
-    
-    self.albumNameLb.hx_y = self.hx_h / 2 - self.albumNameLb.hx_h - 2;
-    self.countLb.hx_y = self.hx_h / 2 + 2;
-    
-    self.lineView.frame = CGRectMake(12, self.hx_h - 0.5f, self.hx_w - 12, 0.5f);
+//    self.coverView.frame = CGRectMake(12, 5, self.hx_h - 10, self.hx_h - 10);
+//    self.albumNameLb.hx_x = CGRectGetMaxX(self.coverView.frame) + 12;
+//    self.albumNameLb.hx_w = self.hx_w - self.albumNameLb.hx_x - 10;
+//    self.albumNameLb.hx_h = self.albumNameLb.hx_getTextHeight;
+//    
+//    self.countLb.hx_x = CGRectGetMaxX(self.coverView.frame) + 12;
+//    self.countLb.hx_w = self.hx_w - self.countLb.hx_x - 10;
+//    self.countLb.hx_h = 14;
+//    
+//    self.albumNameLb.hx_y = self.hx_h / 2 - self.albumNameLb.hx_h - 2;
+//    self.countLb.hx_y = self.hx_h / 2 + 2;
+//    
+//    self.lineView.frame = CGRectMake(12, self.hx_h - 0.5f, self.hx_w - 12, 0.5f);
 }
 - (UIView *)selectedBgView {
     if (!_selectedBgView) {
         _selectedBgView = [[UIView alloc] init];
+        _selectedBgView.backgroundColor = [UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.f];
     }
     return _selectedBgView;
 }
@@ -268,18 +246,23 @@
 - (UILabel *)albumNameLb {
     if (!_albumNameLb) {
         _albumNameLb = [[UILabel alloc] init];
+        _albumNameLb.textColor = [UIColor blackColor];
+        _albumNameLb.font = [UIFont systemFontOfSize:14];
     }
     return _albumNameLb;
 }
 - (UILabel *)countLb {
     if (!_countLb) {
         _countLb = [[UILabel alloc] init];
+        _countLb.textColor = [UIColor blackColor];
+        _countLb.font = [UIFont systemFontOfSize:13];
     }
     return _countLb;
 }
 - (UIView *)lineView {
     if (!_lineView) {
         _lineView = [[UIView alloc] init];
+        _lineView.backgroundColor = [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.f];
     }
     return _lineView;
 }
@@ -293,48 +276,28 @@
 @end
 
 @implementation HXAlbumTitleView
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    [super traitCollectionDidChange:previousTraitCollection];
-#ifdef __IPHONE_13_0
-    if (@available(iOS 13.0, *)) {
-        if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
-            [self changeColor];
-        }
-    }
-#endif
-}
 - (instancetype)initWithManager:(HXPhotoManager *)manager {
     self = [super init];
     if (self) {
         self.manager = manager;
+        if (manager.configuration.navigationTitleSynchColor) {
+            self.titleLb.textColor = manager.configuration.themeColor;
+            self.arrowIcon.tintColor = manager.configuration.themeColor;
+        }else {
+            if (manager.configuration.navigationTitleColor) {
+                self.titleLb.textColor = manager.configuration.navigationTitleColor;
+                self.arrowIcon.tintColor = manager.configuration.navigationTitleColor;
+            }
+        }
+        if (manager.configuration.navigationTitleColor) {
+            self.titleLb.textColor = manager.configuration.navigationTitleColor;
+            self.arrowIcon.tintColor = manager.configuration.navigationTitleColor;
+        }
         [self addSubview:self.titleLb];
         [self addSubview:self.arrowIcon];
         [self addSubview:self.button];
-        [self changeColor];
     }
     return self;
-}
-- (void)changeColor {
-    UIColor *themeColor;
-    UIColor *navigationTitleColor;
-    if ([HXPhotoCommon photoCommon].isDark) {
-        themeColor = [UIColor whiteColor];
-        navigationTitleColor = [UIColor whiteColor];
-    }else {
-        themeColor = self.manager.configuration.themeColor;
-        navigationTitleColor = self.manager.configuration.navigationTitleColor;
-    }
-    if (self.manager.configuration.navigationTitleSynchColor) {
-        self.titleLb.textColor = themeColor;
-        self.arrowIcon.tintColor = themeColor;
-    }else {
-        self.titleLb.textColor = [UIColor blackColor];
-        self.arrowIcon.tintColor = [UIColor blackColor];
-    }
-    if (navigationTitleColor) {
-        self.titleLb.textColor = navigationTitleColor;
-        self.arrowIcon.tintColor = navigationTitleColor;
-    }
 }
 - (void)setModel:(HXAlbumModel *)model {
     _model = model;
@@ -373,14 +336,18 @@
         _titleLb = [[UILabel alloc] init];
         _titleLb.font = [UIFont boldSystemFontOfSize:17];
         _titleLb.textAlignment = NSTextAlignmentCenter;
+        _titleLb.textColor = [UIColor blackColor];
         _titleLb.alpha = 0;
     }
     return _titleLb;
 }
 - (UIImageView *)arrowIcon {
     if (!_arrowIcon) {
-        _arrowIcon = [[UIImageView alloc] initWithImage:[[UIImage hx_imageNamed:@"hx_nav_arrow_down"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+//        _arrowIcon = [[UIImageView alloc] initWithImage:[[UIImage hx_imageNamed:@"hx_nav_arrow_down"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]];
+        _arrowIcon = [[UIImageView alloc]init];
+        _arrowIcon.theme_image = photoNavArrowDown;
         _arrowIcon.hx_size = _arrowIcon.image.size;
+        _arrowIcon.tintColor = [UIColor blackColor];
         _arrowIcon.alpha = 0;
     }
     return _arrowIcon;
@@ -392,20 +359,15 @@
         HXWeakSelf
         _button.highlightedBlock = ^(BOOL highlighted) {
             UIColor *color = [UIColor blackColor];
-            UIColor *themeColor;
-            UIColor *navigationTitleColor;
-            if ([HXPhotoCommon photoCommon].isDark) {
-                themeColor = [UIColor whiteColor];
-                navigationTitleColor = [UIColor whiteColor];
-            }else {
-                themeColor = weakSelf.manager.configuration.themeColor;
-                navigationTitleColor = weakSelf.manager.configuration.navigationTitleColor;
-            }
             if (weakSelf.manager.configuration.navigationTitleSynchColor) {
-                color = themeColor;
+                color = weakSelf.manager.configuration.themeColor;
+            }else {
+                if (weakSelf.manager.configuration.navigationTitleColor) {
+                    color = weakSelf.manager.configuration.navigationTitleColor;
+                }
             }
-            if (navigationTitleColor) {
-                color = navigationTitleColor;
+            if (weakSelf.manager.configuration.navigationTitleColor) {
+                color = weakSelf.manager.configuration.navigationTitleColor;
             }
             weakSelf.titleLb.textColor = highlighted ? [color colorWithAlphaComponent:0.5f] : color;
             weakSelf.arrowIcon.tintColor = highlighted ? [color colorWithAlphaComponent:0.5f] : color;

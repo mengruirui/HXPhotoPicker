@@ -7,13 +7,13 @@
 //
 
 #import "UIViewController+HXExtension.h"
-#import "HXPhotoPicker.h" 
+#import "HXPhotoPicker.h"
 
 @implementation UIViewController (HXExtension)
 - (void)hx_presentAlbumListViewControllerWithManager:(HXPhotoManager *)manager
                                             delegate:(id)delegate {
     HXAlbumListViewController *vc = [[HXAlbumListViewController alloc] initWithManager:manager];
-    vc.delegate = delegate ? delegate : (id)self; 
+    vc.delegate = delegate ? delegate : (id)self;
     HXCustomNavigationController *nav = [[HXCustomNavigationController alloc] initWithRootViewController:vc];
     nav.supportRotation = manager.configuration.supportRotation;
     nav.modalPresentationStyle = UIModalPresentationOverFullScreen;

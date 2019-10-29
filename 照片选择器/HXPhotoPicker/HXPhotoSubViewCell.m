@@ -67,7 +67,7 @@
 - (UIButton *)deleteBtn {
     if (!_deleteBtn) {
         _deleteBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_deleteBtn setImage:[UIImage hx_imageNamed:@"hx_compose_delete"] forState:UIControlStateNormal];
+        [_deleteBtn setImage:[UIImage hx_imageNamed:@"deleta_pic"] forState:UIControlStateNormal];
         [_deleteBtn addTarget:self action:@selector(didDeleteClick) forControlEvents:UIControlEventTouchUpInside];
     }
     return _deleteBtn;
@@ -243,14 +243,14 @@
     self.imageView.frame = self.bounds;
     
     self.stateLb.frame = CGRectMake(0, self.hx_h - 18, self.hx_w - 4, 18);
-    self.bottomMaskLayer.frame = CGRectMake(0, self.hx_h - 25, self.hx_w, 25);
+//    self.bottomMaskLayer.frame = CGRectMake(0, self.hx_h - 25, self.hx_w, 25);
     
     CGFloat width = self.frame.size.width;
     CGFloat height = self.frame.size.height;
     CGFloat deleteBtnW = self.deleteBtn.currentImage.size.width;
     CGFloat deleteBtnH = self.deleteBtn.currentImage.size.height;
-    self.deleteBtn.frame = CGRectMake(width - deleteBtnW, 0, deleteBtnW, deleteBtnH);
-    
+    self.deleteBtn.frame = CGRectMake(width - deleteBtnW - 6, 6, deleteBtnW, deleteBtnH);
+
     self.progressView.center = CGPointMake(width / 2, height / 2);
     self.highlightMaskView.frame = self.bounds;
 }
@@ -260,7 +260,7 @@
     if (self.model.type == HXPhotoModelMediaTypeCamera || self.canEdit) {
         return;
     }
-    self.highlightMaskView.hidden = !highlighted;
+//    self.highlightMaskView.hidden = !highlighted;
 }
 
 - (UIView *)highlightMaskView {

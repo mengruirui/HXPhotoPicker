@@ -33,6 +33,17 @@
 
 @implementation HXPhotoModel
 
+//- (NSURL *)fileURL {
+//    if (self.type == HXPhotoModelMediaTypeCameraVideo && !_fileURL) {
+//        _fileURL = self.videoURL;
+//    }
+//    if (self.type != HXPhotoModelMediaTypeCameraPhoto) {
+//        if (self.asset && !_fileURL) {
+//            _fileURL = [self.asset valueForKey:@"mainFileURL"];
+//        }
+//    }
+//    return _fileURL;
+//}
 - (BOOL)isEqualPhotoModel:(HXPhotoModel *)photoModel {
     if (!photoModel) {
         return NO;
@@ -69,31 +80,6 @@
     }
     return NO;
 }
-
-
-/// 重写 isEqual 方法 会因为 isEqualPhotoModel 这个在选择照片的时候导致一点点卡顿所以屏蔽
-/// 想要判断两个model是否相容请在需要的时候调用 isEqualPhotoModel 方法来判断
-//- (BOOL)isEqual:(id)object {
-//    if (self == object) {
-//        return YES;
-//    }
-//    if (![self isKindOfClass:[HXPhotoModel class]]) {
-//        return NO;
-//    }
-//    return [self isEqualPhotoModel:object];
-//}
-
-//- (NSURL *)fileURL {
-//    if (self.type == HXPhotoModelMediaTypeCameraVideo && !_fileURL) {
-//        _fileURL = self.videoURL;
-//    }
-//    if (self.type != HXPhotoModelMediaTypeCameraPhoto) {
-//        if (self.asset && !_fileURL) {
-//            _fileURL = [self.asset valueForKey:@"mainFileURL"];
-//        }
-//    }
-//    return _fileURL;
-//}
 
 - (NSDate *)creationDate {
     if (self.type == HXPhotoModelMediaTypeCameraPhoto || self.type == HXPhotoModelMediaTypeCameraVideo) {
@@ -717,7 +703,7 @@
                                      progressHandler:(HXModelProgressHandler)progressHandler
                                              success:(HXModelAVAssetSuccessBlock)success
                                               failed:(HXModelFailedBlock)failed
- {
+{
     if (self.type == HXPhotoModelMediaTypeCameraVideo) {
         if (success) {
             AVAsset *asset = [AVAsset assetWithURL:self.videoURL];
@@ -725,6 +711,7 @@
         }
         return 0;
     }
+    //    [[PHImageManager defaultManager] cancelImageRequest:self.iCloudRequestID];
     
     PHVideoRequestOptions *options = [[PHVideoRequestOptions alloc] init];
     options.deliveryMode = deliveryMode;
@@ -1067,8 +1054,7 @@
         return;
     }
     HXWeakSelf
-    PHVideoRequestOptionsDeliveryMode mode = [presetName isEqualToString:AVAssetExportPresetHighestQuality] ? PHVideoRequestOptionsDeliveryModeHighQualityFormat : PHVideoRequestOptionsDeliveryModeFastFormat;
-    [self requestAVAssetStartRequestICloud:startRequestICloud deliveryMode:mode progressHandler:iCloudProgressHandler success:^(AVAsset * _Nullable avAsset, AVAudioMix * _Nullable audioMix, HXPhotoModel * _Nullable model, NSDictionary * _Nullable info) {
+    [self requestAVAssetStartRequestICloud:startRequestICloud progressHandler:iCloudProgressHandler success:^(AVAsset *avAsset, AVAudioMix *audioMix, HXPhotoModel *model, NSDictionary *info) {
         HXStrongSelf
         NSArray *presets = [AVAssetExportSession exportPresetsCompatibleWithAsset:avAsset];
         if ([presets containsObject:presetName]) {
@@ -1129,11 +1115,65 @@
             if (HXShowLog) NSSLog(@"该设备不支持:%@",presetName);
         }
     } failed:failed];
+//    [self requestAVAssetExportSessionStartRequestICloud:startRequestICloud
+//                                        progressHandler:iCloudProgressHandler
+//                                             completion:^(AVAssetExportSession *assetExportSession, HXPhotoModel *model, NSDictionary *info) {
+//
+//        NSString *fileName = [[NSString hx_fileName] stringByAppendingString:@".mp4"];
+//        NSString *fullPathToFile = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
+//        NSURL *videoURL = [NSURL fileURLWithPath:fullPathToFile];
+//        assetExportSession.outputURL = videoURL;
+//        assetExportSession.shouldOptimizeForNetworkUse = YES;
+//
+//        NSArray *supportedTypeArray = assetExportSession.supportedFileTypes;
+//        if ([supportedTypeArray containsObject:AVFileTypeMPEG4]) {
+//            assetExportSession.outputFileType = AVFileTypeMPEG4;
+//        } else if (supportedTypeArray.count == 0) {
+//            if (failed) {
+//                failed(nil, model);
+//            }
+//            if (HXShowLog) NSSLog(@"不支持导入该类型视频");
+//            return;
+//        }else {
+//            assetExportSession.outputFileType = [supportedTypeArray objectAtIndex:0];
+//        }
+//
+//        NSTimer *timer = [NSTimer hx_scheduledTimerWithTimeInterval:0.1f block:^{
+//            if (exportProgressHandler) {
+//                exportProgressHandler(assetExportSession.progress, weakSelf);
+//            }
+//        } repeats:YES];
+//
+//        [assetExportSession exportAsynchronouslyWithCompletionHandler:^{
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                if ([assetExportSession status] == AVAssetExportSessionStatusCompleted) {
+//                    if (HXShowLog) NSSLog(@"视频导出完成");
+//                    [timer invalidate];
+//                    if (success) {
+//                        success(videoURL, weakSelf);
+//                    }
+//                }else if ([assetExportSession status] == AVAssetExportSessionStatusFailed){
+//                    if (HXShowLog) NSSLog(@"视频导出失败");
+//                    [timer invalidate];
+//                    if (failed) {
+//                        failed(nil, weakSelf);
+//                    }
+//                }else if ([assetExportSession status] == AVAssetExportSessionStatusCancelled) {
+//                    if (HXShowLog) NSSLog(@"视频导出被取消");
+//                    [timer invalidate];
+//                    if (failed) {
+//                        failed(nil, weakSelf);
+//                    }
+//                }
+//            });
+//        }];
+//    } failed:failed];
 }
 - (PHContentEditingInputRequestID)requestImageURLStartRequestICloud:(void (^)(PHContentEditingInputRequestID iCloudRequestId, HXPhotoModel *model))startRequestICloud
                                                     progressHandler:(HXModelProgressHandler)progressHandler
                                                             success:(HXModelImageURLSuccessBlock)success
                                                              failed:(HXModelFailedBlock)failed {
+
     if (self.type == HXPhotoModelMediaTypeCameraPhoto) {
         if (failed) {
             failed(nil, self);

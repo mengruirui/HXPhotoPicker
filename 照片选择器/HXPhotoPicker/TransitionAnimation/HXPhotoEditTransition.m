@@ -110,13 +110,8 @@
     }
     fromCell.hidden = YES;
     [tempBgView addSubview:tempView];
-    if (fromCell) {
-        [fromVC.view insertSubview:tempBgView atIndex:1];
-        [containerView addSubview:toVC.view];
-    }else {
-        [containerView addSubview:tempBgView];
-        [containerView addSubview:toVC.view];
-    }
+    [fromVC.view insertSubview:tempBgView atIndex:1];
+    [containerView addSubview:toVC.view];
     toVC.view.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0];
     
     [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.f options:UIViewAnimationOptionCurveEaseOut animations:^{

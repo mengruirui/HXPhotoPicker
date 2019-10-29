@@ -28,6 +28,7 @@
     self.selectTogether = NO;
     self.showOriginalBytesLoading = NO;
     self.exportVideoURLForHighestQuality = NO;
+
     self.maxNum = 10;
     self.photoMaxNum = 9;
     self.videoMaxNum = 1;
@@ -94,16 +95,6 @@
 //    self.albumShowMode = HXPhotoAlbumShowModePopup;
     
     self.editVideoExportPresetName = AVAssetExportPresetHighestQuality;
-    
-    self.cellDarkSelectTitleColor = [UIColor whiteColor];
-    self.cellDarkSelectBgColor = [UIColor colorWithRed:0.15 green:0.15 blue:0.15 alpha:1];
-    self.previewDarkSelectBgColor = [UIColor whiteColor];
-    self.previewDarkSelectTitleColor = [UIColor blackColor];
-    [HXPhotoCommon photoCommon].photoStyle = HXPhotoStyleDefault;
-}
-- (void)setPhotoStyle:(HXPhotoStyle)photoStyle {
-    _photoStyle = photoStyle;
-    [HXPhotoCommon photoCommon].photoStyle = photoStyle;
 }
 - (void)setLanguageType:(HXPhotoLanguageType)languageType {
     if ([HXPhotoCommon photoCommon].languageType != languageType) {

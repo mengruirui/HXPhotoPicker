@@ -20,11 +20,21 @@
     imageName = [imageName stringByAppendingString:@"@2x"];
     NSString *imagePath = [myBundle pathForResource:imageName ofType:@"png"];
     image = [self imageWithContentsOfFile:imagePath];
+//    NSString *path = [NSString stringWithFormat:@"HXPhotoPicker.bundle/%@",imageName];
+//    image = [UIImage imageNamed:path];
     if (image) {
         return image;
     } else {
         imageName = [imageName stringByReplacingOccurrencesOfString:@"@2x" withString:@""];
         image = [self imageNamed:imageName];
+//        if (image) {
+//            return image;
+//        }
+//        NSString *path = [NSString stringWithFormat:@"Frameworks/HXPhotoPicker.framework/HXPhotoPicker.bundle/%@",imageName];
+//        image = [UIImage imageNamed:path];
+//        if (!image) {
+//            image = [UIImage imageNamed:imageName];
+//        }
         return image;
     }
 } 

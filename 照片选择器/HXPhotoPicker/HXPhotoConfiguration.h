@@ -7,22 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
-
-
 /// 当使用了自定义相机类型时会过滤掉内部按 HXPhotoManagerSelectedType 来设置的逻辑，
 /// 将会使用自定义类型的逻辑进行设置
 typedef NS_ENUM(NSUInteger, HXPhotoCustomCameraType) {
     HXPhotoCustomCameraTypeUnused = 0,      //!< 不使用自定义相机类型，按默认逻辑设置
     HXPhotoCustomCameraTypePhoto = 1,       //!< 拍照
     HXPhotoCustomCameraTypeVideo = 2,       //!< 录制
-    HXPhotoCustomCameraTypePhotoAndVideo    //!< 拍照和录制一起
+    HXPhotoCustomCameraTypePhotoAndVideo
 };
-
 typedef NS_ENUM(NSUInteger, HXPhotoConfigurationCameraType) {
     HXPhotoConfigurationCameraTypePhoto = 0,        //!< 拍照
     HXPhotoConfigurationCameraTypeVideo = 1,        //!< 录制
-    HXPhotoConfigurationCameraTypePhotoAndVideo     //!< 拍照和录制一起
-};
+    HXPhotoConfigurationCameraTypeTypePhotoAndVideo //!< 拍照和录制一起
+}; 
 
 typedef NS_ENUM(NSUInteger, HXPhotoAlbumShowMode) {
     HXPhotoAlbumShowModeDefault = 0,    //!< 默认的
@@ -30,17 +27,12 @@ typedef NS_ENUM(NSUInteger, HXPhotoAlbumShowMode) {
 };
 
 typedef NS_ENUM(NSUInteger, HXPhotoLanguageType) {
-    HXPhotoLanguageTypeSys = 0, //!< 跟随系统语言
-    HXPhotoLanguageTypeSc,      //!< 中文简体
-    HXPhotoLanguageTypeTc,      //!< 中文繁体
-    HXPhotoLanguageTypeJa,      //!< 日文
-    HXPhotoLanguageTypeKo,      //!< 韩文
-    HXPhotoLanguageTypeEn       //!< 英文
-};
-
-typedef NS_ENUM(NSUInteger, HXPhotoStyle) {
-    HXPhotoStyleDefault = 0,    //!< 默认
-    HXPhotoStyleDark            //!< 暗黑
+    HXPhotoLanguageTypeSys = 0, // 跟随系统语言
+    HXPhotoLanguageTypeSc,      // 中文简体
+    HXPhotoLanguageTypeTc,      // 中文繁体
+    HXPhotoLanguageTypeJa,      // 日文
+    HXPhotoLanguageTypeKo,      // 韩文
+    HXPhotoLanguageTypeEn       // 英文
 };
 
 @class
@@ -51,7 +43,6 @@ HXPhotoModel,
 HXPhotoPreviewViewController;
 
 @interface HXPhotoConfiguration : NSObject
-
 /// 在照片列表选择照片完后点击完成时是否请求图片和视频地址
 /// 选中了原图则是原图，没选中则是高清图
 /// 并赋值给model的 thumbPhoto / previewPhoto / videoURL 属性
@@ -87,109 +78,164 @@ HXPhotoPreviewViewController;
 
 /// 暗黑模式下预览大图右上角选择按钮选中之后的按钮背景颜色
 @property (strong, nonatomic) UIColor *previewDarkSelectBgColor;
-
-/// 相册风格
-@property (assign, nonatomic) HXPhotoStyle photoStyle;
-
-/// 拍摄的画质   默认 AVCaptureSessionPreset1280x720
+/**
+ 拍摄的画质
+ 默认 AVCaptureSessionPreset1280x720
+ */
 @property (copy, nonatomic) NSString *sessionPreset;
 
-/// 使用框架自带的相机录制视频时设置的编码格式， ios11以上
-/// iphone7及以上时系统默认AVVideoCodecHEVC
-/// HEVC仅支持iPhone 7及以上设备
-/// iphone6、6s 都不支持H.265，软解H265视频只有声音没有画面
-/// 当iphone7以下机型出现只有声音没有画面的问题，请将这个值设置为AVVideoCodecH264
-/// 替换成系统相机也可以解决
+/**
+ 使用框架自带的相机录制视频时设置的编码格式， ios11以上
+ iphone7及以上时系统默认AVVideoCodecHEVC
+ HEVC仅支持iPhone 7及以上设备
+ iphone6、6s 都不支持H.265，软解H265视频只有声音没有画面
+ 当iphone7以下机型出现只有声音没有画面的问题，请将这个值设置为AVVideoCodecH264
+ 替换成系统相机也可以解决
+ */
 @property (copy, nonatomic) NSString *videoCodecKey;
 
-/// 原图按钮显示已选照片的大小
+/**
+ 原图按钮显示已选照片的大小
+ */
 @property (assign, nonatomic) BOOL showOriginalBytes;
-
 /// 原图按钮显示已选照片大小时是否显示加载菊花
 @property (assign, nonatomic) BOOL showOriginalBytesLoading;
-
-/// 导出裁剪视频的质量 - default AVAssetExportPresetHighestQuality
+/**
+ 导出裁剪视频的质量 - default AVAssetExportPresetHighestQuality
+ */
 @property (copy, nonatomic) NSString *editVideoExportPresetName;
 
-/// 编辑视频时裁剪的最小秒数，如果小于1秒，则为1秒
+/**
+ 编辑视频时裁剪的最小秒数
+ 如果小于1秒,则为1秒
+ */
 @property (assign, nonatomic) NSInteger minVideoClippingTime;
 
-/// 编辑视频时裁剪的最大秒数 - default 15s
-/// 如果超过视频时长,则为视频时长
+/**
+ 编辑视频时裁剪的最大秒数 - default 15s
+ 如果超过视频时长,则为视频时长
+ */
 @property (assign, nonatomic) NSInteger maxVideoClippingTime;
 
-/// 预览大图时的长按响应事件
-/// previewViewController.outside
-/// yes -> use HXPhotoView preview
-/// no  -> use HXPhotoViewController preview
+/**
+ 预览大图时的长按响应事件
+ previewViewController.outside
+ yes -> use HXPhotoView preview
+ no  -> use HXPhotoViewController preview
+ */
 @property (copy, nonatomic) void (^ previewRespondsToLongPress)(UILongPressGestureRecognizer *longPress, HXPhotoModel *photoModel, HXPhotoManager *manager, HXPhotoPreviewViewController *previewViewController);
 
-/// 语言类型
+/**
+ 语言类型
+ 默认 跟随系统
+ */
 @property (assign, nonatomic) HXPhotoLanguageType languageType;
 
-/// 如果选择完照片返回之后
-/// 原有界面继承UIScrollView的视图都往下偏移一个导航栏距离的话
-/// 那么请将这个属性设置为YES，即可恢复。
+/**
+ 如果选择完照片返回之后，
+ 原有界面继承UIScrollView的视图都往下偏移一个导航栏距离的话，
+ 那么请将这个属性设置为YES，即可恢复。
+ */
 @property (assign, nonatomic) BOOL restoreNavigationBar;
 
-/// 照片列表是否按照片添加日期排序  默认YES
+/**
+ 照片列表是否按照片添加日期排序  默认YES
+ */
 @property (assign, nonatomic) BOOL creationDateSort;
 
-/// 相册列表展示方式
+/**
+ 相册列表展示方式
+ */
 @property (assign, nonatomic) HXPhotoAlbumShowMode albumShowMode;
 
-/// 模型数组保存草稿时存在本地的文件名称 default HXPhotoPickerModelArray
-/// 如果有多个地方保存了草稿请设置不同的fileName
+/**
+ 模型数组保存草稿时存在本地的文件名称 default HXPhotoPickerModelArray
+ 如果有多个地方保存了草稿请设置不同的fileName
+ */
 @property (copy, nonatomic) NSString *localFileName;
 
-/// 只针对 照片、视频不能同时选并且视频只能选择1个的时候隐藏掉视频cell右上角的选择按钮
+/**
+ 只针对 照片、视频不能同时选并且视频只能选择1个的时候隐藏掉视频cell右上角的选择按钮
+ */
 @property (assign, nonatomic) BOOL specialModeNeedHideVideoSelectBtn;
 
-/// 视频是否可以编辑   default NO
+/**
+ 在照片列表选择照片完后点击完成时是否请求图片
+ 选中了原图则是原图，没选中则是高清图
+ 并赋值给model的 thumbPhoto 和 previewPhoto 属性
+ */
+//@property (assign, nonatomic) BOOL requestImageAfterFinishingSelection DEPRECATED_MSG_ATTRIBUTE("该属性已无效' instead");
+
+/**
+ 视频是否可以编辑   default NO
+ */
 @property (assign, nonatomic) BOOL videoCanEdit;
 
-/// 是否替换照片编辑界面   default NO
+/**
+ 是否替换照片编辑界面   default NO
+ */
 @property (assign, nonatomic) BOOL replacePhotoEditViewController;
 
-/// 图片编辑完成调用这个block 传入模型
-/// beforeModel 编辑之前的模型
-/// afterModel  编辑之后的模型
+/**
+ 图片编辑完成调用这个block 传入模型
+ beforeModel 编辑之前的模型
+ afterModel  编辑之后的模型
+ */
 @property (copy, nonatomic) void (^usePhotoEditComplete)(HXPhotoModel *beforeModel,  HXPhotoModel *afterModel);
 
-/// 是否替换视频编辑界面   default NO
+/**
+ 是否替换视频编辑界面   default NO
+ 
+ */
 @property (assign, nonatomic) BOOL replaceVideoEditViewController;
 
-/// 将要跳转编辑界面 在block内实现跳转
-/// isOutside 是否是HXPhotoView预览时的编辑
-/// beforeModel 编辑之前的模型
+/**
+ 将要跳转编辑界面 在block内实现跳转
+ isOutside 是否是HXPhotoView预览时的编辑
+ beforeModel 编辑之前的模型
+ */
 @property (copy, nonatomic) void (^shouldUseEditAsset)(UIViewController *viewController, BOOL isOutside, HXPhotoManager *manager, HXPhotoModel *beforeModel);
 
-/// 视频编辑完成调用这个block 传入模型
-/// beforeModel 编辑之前的模型
-/// afterModel  编辑之后的模型
+/**
+ 视频编辑完成调用这个block 传入模型
+ beforeModel 编辑之前的模型
+ afterModel  编辑之后的模型
+ */
 @property (copy, nonatomic) void (^useVideoEditComplete)(HXPhotoModel *beforeModel,  HXPhotoModel *afterModel);
 
-/// 照片是否可以编辑   default YES
+/**
+ 照片是否可以编辑   default YES
+ */
 @property (assign, nonatomic) BOOL photoCanEdit;
 
-/// 过渡动画枚举
-/// 时间函数曲线相关
-/// UIViewAnimationOptionCurveEaseInOut
-/// UIViewAnimationOptionCurveEaseIn
-/// UIViewAnimationOptionCurveEaseOut   -->    default
-/// UIViewAnimationOptionCurveLinear
+/**
+ 过渡动画枚举
+ 时间函数曲线相关
+ UIViewAnimationOptionCurveEaseInOut
+ UIViewAnimationOptionCurveEaseIn
+ UIViewAnimationOptionCurveEaseOut   -->    default
+ UIViewAnimationOptionCurveLinear
+ */
 @property (assign, nonatomic) UIViewAnimationOptions transitionAnimationOption;
 
-/// push动画时长 default 0.45f
+/**
+ push动画时长 default 0.45f
+ */
 @property (assign, nonatomic) NSTimeInterval pushTransitionDuration;
 
-/// po动画时长 default 0.35f
+/**
+ po动画时长 default 0.35f
+ */
 @property (assign, nonatomic) NSTimeInterval popTransitionDuration;
 
-/// 手势松开时返回的动画时长 default 0.35f
+/**
+ 手势松开时返回的动画时长 default 0.35f
+ */
 @property (assign, nonatomic) NSTimeInterval popInteractiveTransitionDuration;
 
-/// 是否可移动的裁剪框
+/**
+ 是否可移动的裁剪框
+ */
 @property (assign, nonatomic) BOOL movableCropBox;
 
 /**

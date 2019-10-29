@@ -808,9 +808,12 @@
             [self.allImageModelArray removeObject:self.currentImageModelArray.firstObject];
             [self getCurrentModelImage];
         }else {
-            [self.imageArray addObject:model.thumbPhoto];
-            [self.allImageModelArray removeObject:self.currentImageModelArray.firstObject];
-            [self getCurrentModelImage];
+            if(model.thumbPhoto){
+                [self.imageArray addObject:model.thumbPhoto];
+                [self.allImageModelArray removeObject:self.currentImageModelArray.firstObject];
+                [self getCurrentModelImage];
+            }
+           
         }
     }
 }

@@ -14,6 +14,7 @@
 HXPhotoViewController ,
 HXPhotoViewCell ,
 HXPhotoBottomView ,
+HXCustomCameraController ,
 HXCustomPreviewView ,
 HXAlbumListViewController;
 @protocol HXPhotoViewControllerDelegate <NSObject>
@@ -80,8 +81,6 @@ HXAlbumListViewController;
 @property (assign, nonatomic) BOOL singleSelected;
 @property (strong, nonatomic) UIColor *selectBgColor;
 @property (strong, nonatomic) UIColor *selectedTitleColor;
-@property (strong, nonatomic) UIColor *darkSelectBgColor;
-@property (strong, nonatomic) UIColor *darkSelectedTitleColor;
 - (void)resetNetworkImage;
 - (void)cancelRequest;
 - (void)startRequestICloudAsset;
@@ -92,10 +91,13 @@ HXAlbumListViewController;
 @interface HXPhotoCameraViewCell : UICollectionViewCell
 @property (strong, nonatomic) HXPhotoModel *model;
 @property (nonatomic, strong) AVCaptureSession *session;
-@property (strong, nonatomic, readonly) UIView *previewView;
+
+//@property (strong, nonatomic, readonly) HXCustomCameraController *cameraController;
+@property (strong, nonatomic, readonly) HXCustomPreviewView *previewView;
 @property (strong, nonatomic) UIView *tempCameraPreviewView;
 @property (strong, nonatomic) UIView *tempCameraView;
 @property (assign, nonatomic) BOOL startSession;
+
 @property (copy, nonatomic) void (^ stopRunningComplete)(UIView *tempCameraPreviewView);
 - (void)starRunning;
 - (void)stopRunning;

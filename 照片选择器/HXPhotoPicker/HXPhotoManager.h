@@ -84,7 +84,6 @@ typedef NS_ENUM(NSUInteger, HXPhotoManagerVideoSelectedType) {
  @param completion 获取完成
  */
 - (void)requestPhotosBytesWithCompletion:(void (^)(NSString *totalBytes, NSUInteger totalDataLengths))completion;
-
 /// 已选照片数据的总大小
 @property (assign, nonatomic) NSUInteger *selectPhotoTotalDataLengths;
 @property (strong, nonatomic) NSOperationQueue *dataOperationQueue;
@@ -376,6 +375,8 @@ typedef NS_ENUM(NSUInteger, HXPhotoManagerVideoSelectedType) {
 
 #pragma mark - < 辅助属性 >
 @property (assign, nonatomic) HXPhotoManagerVideoSelectedType videoSelectedType;
+//@property (strong, nonatomic) UIView *tempCameraPreviewView;
+//@property (strong, nonatomic) UIView *tempCameraView;
 
 @property (assign, nonatomic) BOOL selectPhotoing;
 

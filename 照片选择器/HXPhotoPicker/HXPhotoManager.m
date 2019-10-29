@@ -8,6 +8,7 @@
 
 #import "HXPhotoManager.h"
 #import <mach/mach_time.h>
+#import "HXDatePhotoToolManager.h"
 
 
 @interface HXPhotoManager ()<PHPhotoLibraryChangeObserver>
@@ -257,64 +258,65 @@
 }
 - (void)requestPhotosBytesWithCompletion:(void (^)(NSString *, NSUInteger))completion {
     [self.dataOperationQueue cancelAllOperations];
-    self.selectPhotoTotalDataLengths = 0;
-    if (!self.selectedPhotos.count) {
-        if (completion) completion(nil, 0);
-        return;
-    }
-    __block NSUInteger dataLength = 0;
-    __block NSUInteger assetCount = 0;
-    HXWeakSelf
-    NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
-        for (int i = 0 ; i < weakSelf.selectedPhotos.count ; i++) {
-            HXPhotoModel *model = weakSelf.selectedPhotos[i];
-            if (model.subType != HXPhotoModelMediaSubTypePhoto) {
-                continue;
-            }
-            if (model.type == HXPhotoModelMediaTypeCameraPhoto) {
-                NSData *imageData;
-                if (UIImagePNGRepresentation(model.thumbPhoto)) {
-                    //返回为png图像。
-                    imageData = UIImagePNGRepresentation(model.thumbPhoto);
-                }else {
-                    //返回为JPEG图像。
-                    imageData = UIImageJPEGRepresentation(model.thumbPhoto, 1.0);
-                }
-                dataLength += imageData.length;
-                assetCount ++;
-                if (assetCount >= weakSelf.selectedPhotos.count) {
-                    weakSelf.selectPhotoTotalDataLengths = &(dataLength);
-                    NSString *bytes = [HXPhotoTools getBytesFromDataLength:dataLength];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if (completion) completion(bytes, dataLength);
-                    });
-                }
-            }else {
-                [model requestImageDataStartRequestICloud:nil progressHandler:nil success:^(NSData *imageData, UIImageOrientation orientation, HXPhotoModel *model, NSDictionary *info) {
-                    dataLength += imageData.length;
-                    assetCount ++;
-                    if (assetCount >= weakSelf.selectedPhotos.count) {
-                        weakSelf.selectPhotoTotalDataLengths = &(dataLength);
-                        NSString *bytes = [HXPhotoTools getBytesFromDataLength:dataLength];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            if (completion) completion(bytes, dataLength);
-                        });
-                    }
-                } failed:^(NSDictionary *info, HXPhotoModel *model) {
-                    dataLength += 0;
-                    assetCount ++;
-                    if (assetCount >= weakSelf.selectedPhotos.count) {
-                        weakSelf.selectPhotoTotalDataLengths = &(dataLength);
-                        NSString *bytes = [HXPhotoTools getBytesFromDataLength:dataLength];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            if (completion) completion(bytes, dataLength);
-                        });
-                    }
-                }];
-            }
-        }
-    }];
-    [self.dataOperationQueue addOperation:operation];
+      self.selectPhotoTotalDataLengths = 0;
+      if (!self.selectedPhotos.count) {
+          if (completion) completion(nil, 0);
+          return;
+      }
+      __block NSUInteger dataLength = 0;
+      __block NSUInteger assetCount = 0;
+      HXWeakSelf
+      NSBlockOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
+          for (int i = 0 ; i < weakSelf.selectedPhotos.count ; i++) {
+              HXPhotoModel *model = weakSelf.selectedPhotos[i];
+              if (model.subType != HXPhotoModelMediaSubTypePhoto) {
+                  continue;
+              }
+              if (model.type == HXPhotoModelMediaTypeCameraPhoto) {
+                  NSData *imageData;
+                  if (UIImagePNGRepresentation(model.thumbPhoto)) {
+                      //返回为png图像。
+                      imageData = UIImagePNGRepresentation(model.thumbPhoto);
+                  }else {
+                      //返回为JPEG图像。
+                      imageData = UIImageJPEGRepresentation(model.thumbPhoto, 1.0);
+                  }
+                  dataLength += imageData.length;
+                  assetCount ++;
+                  if (assetCount >= weakSelf.selectedPhotos.count) {
+                      weakSelf.selectPhotoTotalDataLengths = &(dataLength);
+                      NSString *bytes = [HXPhotoTools getBytesFromDataLength:dataLength];
+                      dispatch_async(dispatch_get_main_queue(), ^{
+                          if (completion) completion(bytes, dataLength);
+                      });
+                  }
+              }else {
+                  [model requestImageDataStartRequestICloud:nil progressHandler:nil success:^(NSData *imageData, UIImageOrientation orientation, HXPhotoModel *model, NSDictionary *info) {
+                      dataLength += imageData.length;
+                      assetCount ++;
+                      if (assetCount >= weakSelf.selectedPhotos.count) {
+                          weakSelf.selectPhotoTotalDataLengths = &(dataLength);
+                          NSString *bytes = [HXPhotoTools getBytesFromDataLength:dataLength];
+                          dispatch_async(dispatch_get_main_queue(), ^{
+                              if (completion) completion(bytes, dataLength);
+                          });
+                      }
+                  } failed:^(NSDictionary *info, HXPhotoModel *model) {
+                      dataLength += 0;
+                      assetCount ++;
+                      if (assetCount >= weakSelf.selectedPhotos.count) {
+                          weakSelf.selectPhotoTotalDataLengths = &(dataLength);
+                          NSString *bytes = [HXPhotoTools getBytesFromDataLength:dataLength];
+                          dispatch_async(dispatch_get_main_queue(), ^{
+                              if (completion) completion(bytes, dataLength);
+                          });
+                      }
+                  }];
+              }
+          }
+      }];
+      [self.dataOperationQueue addOperation:operation];
+    
 }
 - (void)addNetworkingImageToAlbum:(NSArray<NSString *> *)imageUrls selected:(BOOL)selected {
     if (!imageUrls.count) return;
@@ -686,7 +688,7 @@
     }
     
     NSArray *allAlbums = @[smartAlbums,userAlbums];
-    for (PHFetchResult *fetchResult in allAlbums) { 
+    for (PHFetchResult *fetchResult in allAlbums) {
         for (PHAssetCollection *collection in fetchResult) {
             // 有可能是PHCollectionList类的的对象，过滤掉
             if (![collection isKindOfClass:[PHAssetCollection class]]) continue;
@@ -1052,7 +1054,7 @@
 //            model.cameraNormalImageNamed = @"hx_compose_photo_photograph";
 //            model.cameraPreviewImageNamed = @"hx_takePhoto";
 //        }else {
-            model.cameraNormalImageNamed = @"hx_compose_photo_photograph";
+        model.cameraNormalImageNamed = @"hx_compose_photo_photograph";
             model.cameraPreviewImageNamed = @"hx_takePhoto";
 //        }
         if (!self.configuration.reverseDate) {
@@ -1150,6 +1152,12 @@
     self.tempDateList = dateArray;
     self.tempFirstSelectModel = firstSelectModel;
     self.tempAlbumModel = albumModel;
+//    if (complete) {
+//        complete(allArray, previewArray, photoArray, videoArray, dateArray, firstSelectModel,  albumModel);
+//    }
+//    if (self.photoListBlock) {
+//        self.photoListBlock(allArray, previewArray, photoArray, videoArray, dateArray, firstSelectModel,  albumModel);
+//     }
     if (complete) {
         complete(self.tempAllList, self.tempPreviewList, self.tempPhotoList, self.tempVideoList, self.tempDateList, self.tempFirstSelectModel,  self.tempAlbumModel);
     }
@@ -1806,8 +1814,8 @@
         self.endSelectedCameraVideos = [NSMutableArray arrayWithArray:self.selectedCameraVideos];
         self.endIsOriginal = self.isOriginal;
         self.endPhotosTotalBtyes = self.photosTotalBtyes;
-        
         [self cancelBeforeSelectedList];
+
     }
 }
 - (void)cancelBeforeSelectedList {
@@ -2042,6 +2050,7 @@
         }
         [modelArray addObject:model];
     }
+    
     return modelArray.copy;
 }
 

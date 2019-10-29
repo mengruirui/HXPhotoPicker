@@ -167,26 +167,32 @@ const CGFloat HXZoomRate = 1.0f;
     }
     [self.captureSession commitConfiguration];
 }
+- (void)startSessionComplete:(void (^)(void))complete {
+    if (![self.captureSession isRunning]) {
+        dispatch_async(self.videoQueue, ^{
+            [self.captureSession startRunning];
+            if (complete) {
+                complete();
+            }
+        });
+    }
+}
 - (void)startSession {
-    AVCaptureSession *session = self.captureSession;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (![session isRunning]) {
-            [session startRunning];
-        }
-    });
-//    if (![self.captureSession isRunning]) {
-//        dispatch_async(self.videoQueue, ^{
-//            [self.captureSession startRunning];
-//        });
-//    }
+     AVCaptureSession *session = self.captureSession;
+      dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+          if (![session isRunning]) {
+              [session startRunning];
+          }
+      });
 }
 - (void)stopSession {
-    AVCaptureSession *session = self.captureSession;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (session.running) {
-            [session stopRunning];
-        }
-    });
+    
+     AVCaptureSession *session = self.captureSession;
+     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+         if (session.running) {
+             [session stopRunning];
+         }
+     });
     
 //    if ([self.captureSession isRunning]) {
 //        dispatch_async(self.videoQueue, ^{

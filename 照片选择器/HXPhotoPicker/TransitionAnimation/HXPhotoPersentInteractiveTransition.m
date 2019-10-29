@@ -33,8 +33,8 @@
 @property (assign, nonatomic) CGPoint scrollViewContentOffset;
 @property (assign, nonatomic) CGRect imageInitialFrame;
 @property (strong, nonatomic) UIPanGestureRecognizer *panGesture;
-
 @property (assign, nonatomic) BOOL atFirstPan;
+
 @end
 
 @implementation HXPhotoPersentInteractiveTransition
@@ -74,12 +74,12 @@
         return NO;
     }
     if ([otherGestureRecognizer.view isKindOfClass:[UIScrollView class]]) {
-        UIScrollView *scrollView = (UIScrollView *)otherGestureRecognizer.view;
-        if (scrollView.contentOffset.y <= 0 &&
-            !scrollView.zooming && self.atFirstPan) {
-            return YES;
-        }
-    }
+          UIScrollView *scrollView = (UIScrollView *)otherGestureRecognizer.view;
+          if (scrollView.contentOffset.y <= 0 &&
+              !scrollView.zooming && self.atFirstPan) {
+              return YES;
+          }
+      }
     return NO;
 }
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
@@ -150,6 +150,7 @@
             break;
     }
 }
+
 - (void)gestureRecognizeDidUpdate:(UIPanGestureRecognizer *)gestureRecognizer {
     CGFloat scale = 0;
     
@@ -160,7 +161,7 @@
         scale = 1.f;
     }
     switch (gestureRecognizer.state) {
-        case UIGestureRecognizerStateBegan: {
+        case UIGestureRecognizerStateBegan:{
             if (scale < 0) {
                 [self.vc.view removeGestureRecognizer:self.panGesture];
                 [self.vc.view addGestureRecognizer:self.panGesture];
@@ -228,6 +229,7 @@
     
     HXPhotoPreviewViewCell *fromCell = [fromVC currentPreviewCell:model];
     
+    
     UICollectionView *collectionView = (UICollectionView *)self.photoView.collectionView;
     if ([toVC isKindOfClass:[UINavigationController class]]) {
         UINavigationController *nav = (UINavigationController *)toVC;
@@ -283,6 +285,11 @@
     }
     self.tempImageView.clipsToBounds = YES;
     self.tempImageView.contentMode = UIViewContentModeScaleAspectFill;
+//    BOOL contains = YES;
+//    if (!toCell) {
+//        contains = [toVC scrollToModel:model];
+//        toCell = [toVC currentPreviewCell:model];
+//    }
     self.bgView = [[UIView alloc] initWithFrame:containerView.bounds];
     CGFloat scaleX;
     CGFloat scaleY;
@@ -318,18 +325,15 @@
     [containerView addSubview:fromVC.view]; 
     
     if (!fromVC.bottomView.userInteractionEnabled) {
-        self.bgView.backgroundColor = [UIColor blackColor];
+        self.bgView.theme_backgroundColor = pageBGColorPicker;
     }else {
         if (fromVC.exteriorPreviewStyle == HXPhotoViewPreViewShowStyleDark) {
-            self.bgView.backgroundColor = [UIColor blackColor];
+            self.bgView.theme_backgroundColor = pageBGColorPicker;;
         }else {
-            self.bgView.backgroundColor = [HXPhotoCommon photoCommon].isDark ? [UIColor blackColor] : [UIColor whiteColor];
+            self.bgView.theme_backgroundColor = pageBGColorPicker;;
         }
     }
     fromVC.collectionView.hidden = YES;
-    if (!toCell && fromVC.manager.configuration.customPreviewToView) {
-        toCell = (id)fromVC.manager.configuration.customPreviewToView(fromVC.currentModelIndex);
-    }
     toCell.hidden = YES;
     fromVC.view.backgroundColor = [UIColor clearColor];
     self.tempCell = toCell;
@@ -338,6 +342,11 @@
     HXPhotoPreviewViewController *fromVC = (HXPhotoPreviewViewController *)[self.transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     fromVC.view.alpha = scale;
     self.bgView.alpha = fromVC.view.alpha;
+    
+    if (!fromVC.bottomView.userInteractionEnabled) {
+//        UIViewController *toVC = [self.transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+//        toVC.navigationController.navigationBar.alpha = 1 - scale;
+    }
 }
 - (void)interPercentCancel{
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
@@ -353,15 +362,19 @@
         self.tempImageView.transform = CGAffineTransformIdentity;
         self.tempImageView.center = self.transitionImgViewCenter;
         self.bgView.alpha = 1;
+//        if (!fromVC.bottomView.userInteractionEnabled) {
+//            toVC.bottomView.alpha = 0;
+//        }
     } completion:^(BOOL finished) {
+//        toVC.navigationController.navigationBar.userInteractionEnabled = YES;
         fromVC.collectionView.hidden = NO;
         if (!fromVC.bottomView.userInteractionEnabled) {
-            fromVC.view.backgroundColor = [UIColor blackColor];
+            fromVC.view.theme_backgroundColor = pageBGColorPicker;;
         }else {
             if (fromVC.exteriorPreviewStyle == HXPhotoViewPreViewShowStyleDark) {
-                fromVC.view.backgroundColor = [UIColor blackColor];
+                fromVC.view.theme_backgroundColor = pageBGColorPicker;;
             }else {
-                fromVC.view.backgroundColor = [HXPhotoCommon photoCommon].isDark ? [UIColor blackColor] : [UIColor whiteColor];
+                fromVC.view.theme_backgroundColor = pageBGColorPicker;;
             }
         }
         self.tempCell.hidden = NO;
@@ -401,23 +414,11 @@
     }
     self.tempImageView.transform = CGAffineTransformIdentity;
     self.tempImageView.frame = tempImageViewFrame;
+    self.playerLayer.frame = CGRectMake(0, 0, self.tempCell.imageView.hx_w, self.tempCell.imageView.hx_h);
     
-    self.playerLayer.frame = CGRectMake(0, 0, self.tempCell.hx_w, self.tempCell.hx_h);
-
-    if ([fromVC.delegate respondsToSelector:@selector(photoPreviewControllerDidCancel:model:)]) {
-        HXPhotoModel *model;
-        if (fromVC.modelArray.count) {
-            model = fromVC.modelArray[fromVC.currentModelIndex];
-        }
-        [fromVC.delegate photoPreviewControllerDidCancel:fromVC model:model];
-    }
-    if (fromVC.manager.configuration.restoreNavigationBar) {
-        [UINavigationBar appearance].translucent = NO;
-    }
-    fromVC.manager.selectPhotoing = NO;
     [UIView animateWithDuration:duration delay:0.0 usingSpringWithDamping:0.8 initialSpringVelocity:0.1 options:option animations:^{
         if (self.tempCell) {
-            self.tempImageView.frame = [self.tempCell convertRect:self.tempCell.bounds toView: containerView];
+            self.tempImageView.frame = [self.tempCell.imageView convertRect:self.tempCell.imageView.bounds toView: containerView];
         }else {
 //            self.tempImageView.center = self.transitionImgViewCenter;
             self.tempImageView.alpha = 0;
@@ -426,8 +427,12 @@
         fromVC.view.alpha = 0;
         self.bgView.alpha = 0;
         toVC.navigationController.navigationBar.alpha = 1;
+//        toVC.bottomView.alpha = 1;
     }completion:^(BOOL finished) {
+//        toVC.navigationController.navigationBar.userInteractionEnabled = YES;
+//        [self.tempCell bottomViewPrepareAnimation];
         self.tempCell.hidden = NO;
+//        [self.tempCell bottomViewStartAnimation];
         self.playerLayer = nil;
         [self.tempImageView removeFromSuperview];
         [self.bgView removeFromSuperview];

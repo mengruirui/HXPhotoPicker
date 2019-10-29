@@ -14,12 +14,13 @@
 
 - (BOOL)hx_detection {
     if (!self.count) {
-        return NO;
-    }
+         return NO;
+     }
     for (id obj in self) {
         if (![obj respondsToSelector:@selector(isKindOfClass:)]) {
             return NO;
         }
+
         if (![obj isKindOfClass:[HXPhotoModel class]]) {
             return NO;
         }
@@ -96,6 +97,7 @@
         return image;
     }
 }
+
 - (void)hx_requestImageWithOriginal:(BOOL)original completion:(nonnull void (^)(NSArray<UIImage *> * _Nullable, NSArray<HXPhotoModel *> * _Nullable))completion {
     if (![self hx_detection] || !self.count) {
         if (completion) {
@@ -146,6 +148,7 @@
                 }
             }
         }];
+
     }
 }
 - (void)hx_requestImageSeparatelyWithOriginal:(BOOL)original completion:(void (^)(NSArray<UIImage *> * _Nullable, NSArray<HXPhotoModel *> * _Nullable))completion {

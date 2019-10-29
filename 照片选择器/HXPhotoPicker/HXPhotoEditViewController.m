@@ -417,6 +417,15 @@
         
         rect.origin.x = (self.imageView.bounds.size.width - rect.size.width) / 2;
         rect.origin.y = (self.imageView.bounds.size.height - rect.size.height) / 2;
+//    }else{ //不设置比例 默认1:1
+//        CGFloat H = rect.size.width * 1.0;
+//        if (H <= rect.size.height) {
+//            rect.size.height = H;
+//        } else {
+//            rect.size.width *= rect.size.height / H;
+//        }
+//        rect.origin.x = (self.imageView.bounds.size.width - rect.size.width) / 2;
+//        rect.origin.y = (self.imageView.bounds.size.height - rect.size.height) / 2;
     }
     [self setClippingRect:rect animated:animated];
 }
@@ -850,22 +859,8 @@
 @end
 
 @implementation HXPhotoEditBottomView
-- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
-    [super traitCollectionDidChange:previousTraitCollection];
-#ifdef __IPHONE_13_0
-    if (@available(iOS 13.0, *)) {
-        if ([self.traitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
-            
-            UIColor *color = [HXPhotoCommon photoCommon].isDark ? [UIColor whiteColor] : self.manager.configuration.themeColor;
-            if ([color isEqual:[UIColor blackColor]]) {
-                color = [UIColor whiteColor];
-            }
-            [self.clipBtn setTitleColor:color forState:UIControlStateNormal];
-            [self.clipBtn setTitleColor:[color colorWithAlphaComponent:0.5] forState:UIControlStateDisabled];
-        }
-    }
-#endif
-}
+
+
 - (instancetype)initWithManager:(HXPhotoManager *)manager {
     self = [super init];
     if (self) {
@@ -963,6 +958,7 @@
     
     self.clipBtn.hx_h = 40;
     self.clipBtn.hx_w = self.clipBtn.titleLabel.hx_getTextWidth;
+//    self.clipBtn.hx_size = CGSizeMake([HXPhotoTools getTextWidth:self.clipBtn.currentTitle height:40 fontSize:15] + 20, 40);
     self.clipBtn.hx_x = self.hx_w - 20 - self.clipBtn.hx_w;
     
     self.selectRatioBtn.center = CGPointMake(self.hx_w / 2, 20);
@@ -1054,7 +1050,7 @@
                 }
             }
         }
-        UIColor *color = [HXPhotoCommon photoCommon].isDark ? [UIColor whiteColor] : self.manager.configuration.themeColor;
+        UIColor *color = slideBarTextColor;
         if ([color isEqual:[UIColor blackColor]]) {
             color = [UIColor whiteColor];
         }
