@@ -18,5 +18,5 @@ Pod::Spec.new do |s|
 
   s.dependency "YYWebImage"
   s.dependency "Masonry"
- 
+  s.dependency "SwiftTheme"
 end
