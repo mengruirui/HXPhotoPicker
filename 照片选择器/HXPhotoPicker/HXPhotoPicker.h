@@ -26,3 +26,4 @@
 #import "UIImageView+HXExtension.h"
 #import "NSArray+HXExtension.h"
 #import "HXPhotoSubViewCell.h"
+#import "HXPhotoPickerDependency.h"
