@@ -17,6 +17,8 @@
 #import "BlocksKit.h"
 #endif
 
+#import "BlocksKit+UIKit.h"
+
 
 #import "HXPickerThemesColor.h"
 #import "HXThemesManager.h"

@@ -376,9 +376,9 @@ HXVideoEditViewControllerDelegate
         [btn setImageEdgeInsets:UIEdgeInsetsMake(0, -20, 0, 0)];  //调整按钮内图片的布局
         [btn setEnlargeEdge:15];
         btn.frame = CGRectMake(0, 0, 30, 44);
-        @weakify(self);
+        __weak typeof(self) wSelf = self;
         [btn bk_addEventHandler:^(id sender) {
-            @strongify(self);
+            __strong typeof(wSelf) self = wSelf;
             [self.navigationController popViewControllerAnimated:YES];
         } forControlEvents:UIControlEventTouchUpInside];
         

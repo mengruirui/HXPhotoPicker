@@ -32,7 +32,7 @@
 #import "HXAlbumlistView.h" 
 #import "NSArray+HXExtension.h"
 #import "HXVideoEditViewController.h"
-
+#import "HXPhotoPickerDependency.h"
 @interface HXPhotoViewController ()
 <
 UICollectionViewDataSource,
@@ -145,7 +145,7 @@ HXVideoEditViewControllerDelegate
         [UINavigationBar appearance].translucent = YES;
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationChanged:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
-    [self wr_setStatusBarStyle:[CNThemesManager isNight] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault];
+    [self wr_setStatusBarStyle:[HXThemesManager isNight] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault];
 
 }
 #pragma mark - < private >
@@ -176,10 +176,10 @@ HXVideoEditViewControllerDelegate
         [btn theme_setTitleColor:cellTitleTextColorPicker forState:(UIControlStateNormal)];
         btn.titleLabel.font = [UIFont boldSystemFontOfSize:17];
         btn.frame = CGRectMake(0, 0, 55, 24);
-        @weakify(self);
+        __weak typeof(self) wSelf = self;
         [btn bk_addEventHandler:^(id sender) {
             
-            @strongify(self);
+            __strong typeof(wSelf) self = wSelf;
             [self.navigationController popViewControllerAnimated:YES];
         } forControlEvents:UIControlEventTouchUpInside];
         
@@ -2202,7 +2202,7 @@ HXVideoEditViewControllerDelegate
     if (!_selectMaskLayer) {
         _selectMaskLayer = [CALayer layer];
         _selectMaskLayer.hidden = YES;
-        _selectMaskLayer.backgroundColor = [CNThemesManager isNight]  ? [navigationBarTitleColor colorWithAlphaComponent:0.7].CGColor : [[UIColor whiteColor] colorWithAlphaComponent:0.7].CGColor;
+        _selectMaskLayer.backgroundColor = [HXThemesManager isNight]  ? [navigationBarTitleColor colorWithAlphaComponent:0.7].CGColor : [[UIColor whiteColor] colorWithAlphaComponent:0.7].CGColor;
 
     }
     return _selectMaskLayer;

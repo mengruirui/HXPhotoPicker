@@ -14,7 +14,7 @@
 @implementation HXThemesManager
 
 //转换到指定主题
-+ (void)switchTo:(CNThemesType)type {
++ (void)switchTo:(HXThemesType)type {
     [ThemeManager setAnimationDuration:0.0];
     [ThemeManager setThemeWithIndex:type];   //0.2版本使用swift2.3不支持从沙盒或mainBundle的plist文件中取, 0.3支持
 }
@@ -30,18 +30,18 @@
 
 //转换到夜间主题
 + (void)switchNight:(BOOL)isToNight {
-    [self switchTo:isToNight ? CNThemesTypeNight : CNThemesTypeDay];
+    [self switchTo:isToNight ? HXThemesTypeNight : HXThemesTypeDay];
 }
 
 //是否是夜间模式
 + (BOOL)isNight {
-    return (((int)[ThemeManager currentThemeIndex]) == CNThemesTypeNight);
+    return (((int)[ThemeManager currentThemeIndex]) == HXThemesTypeNight);
 }
 
 //还原上次使用的主题
 + (void)restoreLastTheme {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    CNThemesType type = (int)[defaults integerForKey:lastThemeIndexKey];
+    HXThemesType type = (int)[defaults integerForKey:lastThemeIndexKey];
     [self switchTo:type];
 }
 

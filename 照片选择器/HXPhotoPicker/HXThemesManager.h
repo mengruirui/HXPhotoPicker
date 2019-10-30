@@ -9,14 +9,14 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-    CNThemesTypeDay = 0,
-    CNThemesTypeNight
-} CNThemesType;
+    HXThemesTypeDay = 0,
+    HXThemesTypeNight
+} HXThemesType;
 
 @interface HXThemesManager : NSObject
 
 //转换到指定主题
-+ (void)switchTo:(CNThemesType)type;
++ (void)switchTo:(HXThemesType)type;
 
 //转换到下一主题
 + (void)switchToNext;
