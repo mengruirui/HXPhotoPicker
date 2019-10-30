@@ -9,7 +9,9 @@
 #import "HXAlbumlistView.h"
 #import "HXPhotoManager.h"
 #import "HXPhotoTools.h"
-
+#import "HXPhotoPickerDependency.h"
+#import "HXPickerThemesColor.h"
+@import SwiftTheme;
 @interface HXAlbumlistView ()<UITableViewDataSource, UITableViewDelegate>
 @end
 

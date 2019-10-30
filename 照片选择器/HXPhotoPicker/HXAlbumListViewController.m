@@ -9,6 +9,7 @@
 #import "HXAlbumListViewController.h" 
 #import "HXPhotoViewController.h"
 #import "UIViewController+HXExtension.h" 
+#import "HXPhotoPickerDependency.h"
 
 @interface HXAlbumListViewController ()
 <
@@ -55,7 +56,7 @@ UITableViewDelegate
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self wr_setStatusBarStyle:[CNThemesManager isNight] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault];
+    [self wr_setStatusBarStyle:[HXThemesManager isNight] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault];
 
     [self requestData];
     self.navigationController.popoverPresentationController.delegate = (id)self;
