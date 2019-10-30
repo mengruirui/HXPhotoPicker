@@ -21,6 +21,7 @@
 #import "HXPhotoPersentInteractiveTransition.h"
 
 #import "UIImageView+HXExtension.h"
+#import "HXPhotoPickerDependency.h"
 
 @interface HXPhotoPreviewViewController ()
 <
@@ -195,7 +196,7 @@ HXVideoEditViewControllerDelegate
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self wr_setStatusBarStyle:[CNThemesManager isNight] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault];
+    [self wr_setStatusBarStyle:[HXThemesManager isNight] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault];
 
     [self setupUI];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationChanged:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];

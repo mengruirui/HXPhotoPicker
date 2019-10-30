@@ -10,7 +10,7 @@
 #import "UIImage+HXExtension.h"
 #import "UIButton+HXExtension.h"
 #import "HXPhotoEditTransition.h"
-
+#import "HXPhotoPickerDependency.h"
 @interface HXPhotoEditViewController ()<HXPhotoEditBottomViewDelegate>
 @property (strong, nonatomic) UIImageView *imageView;
 @property (strong, nonatomic) UIImageView *tempImageView;

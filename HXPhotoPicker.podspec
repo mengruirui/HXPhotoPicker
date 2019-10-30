@@ -20,4 +20,5 @@ Pod::Spec.new do |s|
   s.dependency "Masonry"
   s.dependency "SwiftTheme"
   s.dependency "WRNavigationBar"
+  s.dependency "BlocksKit"
 end

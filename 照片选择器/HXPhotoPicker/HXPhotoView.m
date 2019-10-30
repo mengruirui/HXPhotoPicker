@@ -17,6 +17,7 @@
 #import "HXCustomNavigationController.h"
 #import "HXCustomCameraViewController.h"
 #import "HXPhotoViewController.h"
+#import "HXPhotoPickerDependency.h"
 
 @interface HXPhotoView ()<HXCollectionViewDataSource,HXCollectionViewDelegate,HXPhotoSubViewCellDelegate,UIActionSheetDelegate,UIAlertViewDelegate,HXAlbumListViewControllerDelegate,HXCustomCameraViewControllerDelegate,HXPhotoPreviewViewControllerDelegate, HXPhotoViewControllerDelegate, HXCustomNavigationControllerDelegate>
 @property (strong, nonatomic) NSMutableArray *dataList;

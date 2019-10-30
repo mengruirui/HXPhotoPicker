@@ -50,4 +50,5 @@ static char leftNameKey;
         return CGRectContainsPoint(rect, point);
     }
 }
+
 @end

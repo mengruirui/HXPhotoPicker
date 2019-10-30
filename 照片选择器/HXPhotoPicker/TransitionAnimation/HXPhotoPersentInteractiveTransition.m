@@ -11,6 +11,7 @@
 #import "HXPhotoPreviewBottomView.h"
 #import "HXPhotoView.h"
 #import "HXPhotoSubViewCell.h"
+#import "HXPhotoPickerDependency.h"
 
 @interface HXPhotoPersentInteractiveTransition () <UIGestureRecognizerDelegate>
 @property (nonatomic, weak) id<UIViewControllerContextTransitioning> transitionContext;

@@ -7,6 +7,7 @@
 //
 
 #import "HXThemesManager.h"
+#import "HXPhotoPickerDependency.h"
 
 #define lastThemeIndexKey @"lastThemeIndex"
 

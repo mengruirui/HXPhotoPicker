@@ -10,8 +10,16 @@
 #import "WRNavigationBar.h"
 #endif
 
+
+#if __has_include(<BlocksKit/BlocksKit.h>)
+#import <BlocksKit/BlocksKit.h>
+#elif __has_include("BlocksKit.h")
+#import "BlocksKit.h"
+#endif
+
+
 #import "HXPickerThemesColor.h"
 #import "HXThemesManager.h"
-
+#import "UIColor+HXExtension.h"
 @import SwiftTheme;
 

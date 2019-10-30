@@ -10,6 +10,8 @@
 #import "HXPhotoViewController.h"
 #import "HXPhotoPreviewViewController.h"
 #import "HXPhotoPreviewBottomView.h"
+#import "HXPhotoPickerDependency.h"
+
 @interface HXPhotoViewTransition ()
 @property (assign, nonatomic) HXPhotoViewTransitionType type;
 @end
@@ -64,7 +66,7 @@
     CGFloat height = [UIScreen mainScreen].bounds.size.height; 
     UIImageView *tempView = [[UIImageView alloc] initWithImage:image];
     UIView *tempBgView = [[UIView alloc] initWithFrame:containerView.bounds];
-    tempBgView.backgroundColor = [[CNThemesManager isNight] ? navigationBarTitleColor : slideBarTextColor colorWithAlphaComponent:0];
+    tempBgView.backgroundColor = [[HXThemesManager isNight] ? navigationBarTitleColor : slideBarTextColor colorWithAlphaComponent:0];
     tempView.clipsToBounds = YES;
     tempView.contentMode = UIViewContentModeScaleAspectFill;
     if (fromCell) {
@@ -92,7 +94,7 @@
     [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 usingSpringWithDamping:0.8f initialSpringVelocity:0 options:option animations:^{
 //        tempView.frame = CGRectMake((width - imgWidht) / 2, (height - imgHeight) / 2 + hxTopMargin, imgWidht, imgHeight);
         tempView.frame = CGRectMake((width - imgWidht) / 2, (height - imgHeight) / 2, imgWidht, imgHeight);
-        tempBgView.backgroundColor = [[CNThemesManager isNight] ? navigationBarTitleColor : slideBarTextColor colorWithAlphaComponent:1];
+        tempBgView.backgroundColor = [[HXThemesManager isNight] ? navigationBarTitleColor : slideBarTextColor colorWithAlphaComponent:1];
 
         toVC.bottomView.alpha = 1;
     } completion:^(BOOL finished) {
@@ -138,7 +140,7 @@
         [containerView insertSubview:tempBgView belowSubview:fromVC.view];
     }else {
         [toVC.view insertSubview:tempBgView belowSubview:toVC.bottomView];
-        tempBgView.backgroundColor = [[CNThemesManager isNight] ? navigationBarTitleColor : slideBarTextColor colorWithAlphaComponent:1];
+        tempBgView.backgroundColor = [[HXThemesManager isNight] ? navigationBarTitleColor : slideBarTextColor colorWithAlphaComponent:1];
     }
     toVC.navigationController.navigationBar.userInteractionEnabled = NO;
     
