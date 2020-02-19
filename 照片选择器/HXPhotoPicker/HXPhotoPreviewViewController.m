@@ -1090,6 +1090,7 @@ HXVideoEditViewControllerDelegate
             _navItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[NSBundle hx_localizedStringForKey:@"删除"] style:UIBarButtonItemStylePlain target:self action:@selector(deleteClick)];
         }else {
             _navItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[NSBundle hx_localizedStringForKey:@"取消"] style:UIBarButtonItemStylePlain target:self action:@selector(dismissClick)];
+            _navItem.rightBarButtonItem.tintColor = self.manager.configuration.themeColor;
         }
         if (self.exteriorPreviewStyle == HXPhotoViewPreViewShowStyleDefault) {
             _navItem.titleView = self.customTitleView;
