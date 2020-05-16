@@ -145,7 +145,7 @@ HXVideoEditViewControllerDelegate
         [UINavigationBar appearance].translucent = YES;
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationChanged:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
-    [self wr_setStatusBarStyle:[HXThemesManager isNight] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault];
+    [HXThemesManager isNight] ? [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent]  : [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault];
 
 }
 #pragma mark - < private >

@@ -56,7 +56,7 @@ UITableViewDelegate
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self wr_setStatusBarStyle:[HXThemesManager isNight] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault];
+    [HXThemesManager isNight] ? [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent]  : [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault];
 
     [self requestData];
     self.navigationController.popoverPresentationController.delegate = (id)self;
