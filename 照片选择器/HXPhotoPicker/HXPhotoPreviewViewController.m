@@ -196,6 +196,7 @@ HXVideoEditViewControllerDelegate
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self wr_setStatusBarStyle:[HXThemesManager isNight] ? UIStatusBarStyleLightContent : UIStatusBarStyleDefault];
     [HXThemesManager isNight] ? [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleLightContent]  : [[UIApplication sharedApplication]setStatusBarStyle:UIStatusBarStyleDefault];
 
     [self setupUI];

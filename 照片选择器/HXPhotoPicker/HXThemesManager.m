@@ -18,10 +18,10 @@
     [ThemeManager setAnimationDuration:0.0];
     [ThemeManager setThemeWithIndex:type];   //0.2版本使用swift2.3不支持从沙盒或mainBundle的plist文件中取, 0.3支持
     switch (type) {
-        case CNThemesTypeDay:
+        case HXThemesTypeDay:
             [ThemeManager setThemeWithPlistInMainBundle:@"dayTheme"];
             break;
-        case CNThemesTypeNight:
+        case HXThemesTypeNight:
             [ThemeManager setThemeWithPlistInMainBundle:@"nightTheme"];
             break;
             
