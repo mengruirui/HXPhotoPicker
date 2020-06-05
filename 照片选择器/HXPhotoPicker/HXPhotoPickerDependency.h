@@ -23,6 +23,5 @@
 #import "HXPickerThemesColor.h"
 #import "HXThemesManager.h"
 #import "UIColor+HXExtension.h"
-#import "HXThemesColorManager.h"
 @import SwiftTheme;
 

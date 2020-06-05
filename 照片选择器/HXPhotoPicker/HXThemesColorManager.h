@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HXThemesColorManager : NSObject
 //模块页面大背景颜色
-extern NSString *const pageBGColorPicker;
+//extern NSString *const pageBGColorPicker;
 @end
 
 NS_ASSUME_NONNULL_END

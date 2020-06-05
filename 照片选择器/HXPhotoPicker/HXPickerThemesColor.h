@@ -1,6 +1,7 @@
 
 
 
+#define pageBGColorPicker [ThemeColorPicker pickerWithColors:@[@"#ffffff", @"#2a2d33"]]
 //搜索页面背景
 #define searchPageBGColorPicker [ThemeColorPicker pickerWithColors:@[@"#f5f5f8", @"#25272b"]]
 //滑块字体颜色

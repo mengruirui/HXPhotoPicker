@@ -11,6 +11,6 @@
 @implementation HXThemesColorManager
 
 //模块页面大背景颜色
-NSString *const pageBGColorPicker = @"Global.pageBGColorPicker";
+//NSString *const pageBGColorPicker = @"Global.pageBGColorPicker";
 
 @end
